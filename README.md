@@ -20,7 +20,7 @@ sudo apt-get remove docker docker-engine docker.io containerd runc
 
 ---
 
-___This whole paragraph ("Installing Docker") is an extract of the repository setup section from [this Docker documentation webpage.](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository#install-using-the-repository)___
+___This whole paragraph ("Installing Docker"), except the last part ("Post-installation steps")  is an extract of the repository setup section from [this Docker documentation webpage.](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository#install-using-the-repository)___
 
 ---
 
@@ -124,6 +124,49 @@ Docker Engine is installed and running. The `docker` group is created but no use
 
 To upgrade Docker Engine, first run `sudo apt-get update`, then follow the installation instructions, choosing the new version you want to install.
 
+#### Post-installation steps
+
+##### Proxy setup
+
+---
+
+NOTE
+
+The information given in this paragraph is an adaptation fom [this Docker documentation webpage]().
+
+---
+
+Install ca-certificates package if it's not already available.
+```
+sudo apt-get install ca-certificates
+```
+
+Ask your network administrator for the proxy's CA certificate and append them to the file
+```
+/etc/ssl/certs/ca-certificates.crt
+```
+
+Start the Docker daemon with the command
+```
+HTTPS_PROXY=http://username:password@proxy:port/ dockerd
+```
+
+___Remark: `username` and `password@` are optional and are only needed if your proxy requires authentication.___
+
+
+
+
+If the previous Docker successfull installation step above failed (with the running of the Hello-world image), you may configure your proxy.  
+To do so, follow the steps below:
+
+- Edit your docker file: `sudo vi /etc/default/docker`
+- Add your proxy settings:
+```
+export http_proxy="http://[YOUR_PROXY_URL]]:3128/"
+export https_proxy="http://[YOUR_PROXY_URL]:3128/"
+export no_proxy="[YOUR_PROXY_URL_SUFFIX]"
+```
+- Restart the Docker daemon: `sudo service docker restart`
 
 ## Usefull links
 
