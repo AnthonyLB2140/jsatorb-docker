@@ -20,6 +20,8 @@ sudo apt-get remove docker docker-engine docker.io containerd runc
 
 ---
 
+**NOTE**
+
 ___This whole paragraph ("Installing Docker"), except the last part ("Post-installation steps")  is an extract of the repository setup section from [this Docker documentation webpage.](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository#install-using-the-repository)___
 
 ---
@@ -130,9 +132,9 @@ To upgrade Docker Engine, first run `sudo apt-get update`, then follow the insta
 
 ---
 
-NOTE
+**NOTE**
 
-The information given in this paragraph is an adaptation fom [this Docker documentation webpage]().
+The information given in this paragraph is an adaptation fom [this Docker documentation webpage](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file).
 
 ---
 
