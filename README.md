@@ -18,9 +18,13 @@ sudo apt-get remove docker docker-engine docker.io containerd runc
 
 ## Installing Docker
 
-### Set up the repository
+---
 
-_This whole paragraph ("Set up the repository") is an extract of the repository setup from [this Docker documentation webpage.](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository#install-using-the-repository)_
+___This whole paragraph ("Installing Docker") is an extract of the repository setup section from [this Docker documentation webpage.](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository#install-using-the-repository)___
+
+---
+
+### Set up the repository
 
 1. Update the `apt` package index and install packages to allow apt to use a repository over HTTPS:
 
