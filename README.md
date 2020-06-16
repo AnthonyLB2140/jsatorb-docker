@@ -343,6 +343,8 @@ Go into the JSatOrb root folder:
 >cd repos/git
 ```
 
+TODO: GENERATE ENV and REMOVE manually Orekit and pyparsing
+
 ---
 **NOTE**
 

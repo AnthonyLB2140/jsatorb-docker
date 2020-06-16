@@ -30,36 +30,6 @@ RUN apt-get update && \
 # Setup JAVA_HOME, this is useful for docker commandline
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/RUN export JAVA_HOME
 
-
-# Copy the environment file in the container
-# COPY jsatorb-rest-api/jsatorbenv.yml /tmp/jsatorbenv.yml
-
-#COPY jsatorb-rest-api/libjava.so /lib/libjava.so
-#COPY jsatorb-rest-api/libjvm.so /lib/libjvm.so
-ENV LD_LIBRARY_PATH /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server
-
-# Create the JSatOrb virtual environment
-#RUN conda env create -f /tmp/jsatorbenv.yml
-RUN conda create -n JSatOrbEnv python=3.7 jinja2
-RUN conda config --add channels conda-forge
-RUN conda install -n JSatOrbEnv bottle
-
-# -----------------------------------------------------------------------------
-# [OREKIT_10.2_SNAPSHOT_ONLY] Activate the 2 lines below if the official Orekit 
-# v10.2 is still not released yet.
-COPY jsatorb-rest-api/orekit-10.2-py37he1b5a44_0.tar.bz2 /tmp/orekit-10.2-py37he1b5a44_0.tar.bz2
-RUN conda install -n JSatOrbEnv /tmp/orekit-10.2-py37he1b5a44_0.tar.bz2
-# -----------------------------------------------------------------------------
-
-RUN conda install -n JSatOrbEnv numpy=1.18.1
-RUN conda install -n JSatOrbEnv matplotlib=3.2.1
-
-# Add the environment activation into the user's bash script
-RUN echo "source activate JSatOrbEnv" > ~/.bashrc
-
-# Add the JSatOrb's Anaconda environment binary folder into the PATH
-ENV PATH /opt/conda/envs/JSatOrbEnv/bin:$PATH
-
 # Set working dir
 WORKDIR /app
 
@@ -118,8 +88,71 @@ COPY jsatorb-rest-api/orekit-data.zip jsatorb-rest-api
 #    apt-get install -y ant && \
 #    apt-get clean;
 
+# -----------------------------------------------------------------------------
+# Install Python environment
+# -----------------------------------------------------------------------------
+
+# Copy the environment file in the container
+COPY jsatorb-rest-api/jsatorbenv.yml /tmp/jsatorbenv.yml
+
+#COPY jsatorb-rest-api/libjava.so /lib/libjava.so
+#COPY jsatorb-rest-api/libjvm.so /lib/libjvm.so
+ENV LD_LIBRARY_PATH /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server
+
+# Create the JSatOrb virtual environment
+RUN conda create -n JSatOrbEnv python=3.7
+
+# Add the environment activation into the user's bash script
+RUN echo "source activate JSatOrbEnv" > ~/.bashrc
+
+# Add the JSatOrb's Anaconda environment binary folder into the PATH
+ENV PATH /opt/conda/envs/JSatOrbEnv/bin:$PATH
+ENV CONDA_DEFAULT_ENV JSatOrbEnv
+
+# -----------------------------------------------------------------------------
+# Process dependencies causing FileNotFound error 
+# (see https://github.com/conda/conda/issues/9761)
+# -----------------------------------------------------------------------------
+RUN curl -o /tmp/pyparsing-2.4.7-pyh9f0ad1d_0.tar.bz2 -L https://anaconda.org/conda-forge/pyparsing/2.4.7/download/noarch/pyparsing-2.4.7-pyh9f0ad1d_0.tar.bz2
+RUN curl -o /tmp/bottle-0.12.17-py_0.tar.bz2 -L https://anaconda.org/conda-forge/bottle/0.12.17/download/noarch/bottle-0.12.17-py_0.tar.bz2
+
+# -----------------------------------------------------------------------------
+# [OREKIT_10.2_SNAPSHOT_ONLY] Activate the 2 lines below if the official Orekit 
+# v10.2 is still not released yet.
+COPY jsatorb-rest-api/orekit-10.2-py37he1b5a44_0.tar.bz2 /tmp/orekit-10.2-py37he1b5a44_0.tar.bz2
+#RUN conda install -n JSatOrbEnv /tmp/orekit-10.2-py37he1b5a44_0.tar.bz2
+# -----------------------------------------------------------------------------
+
+# DEBUG STEP: can be removed
+RUN ls -al /tmp
+
+# Installing manually all downloaded bz2 packages
+RUN /bin/bash -c "source activate JSatOrbEnv \
+&& conda install -n JSatOrbEnv /tmp/*.bz2"
+
+# DEBUG STEP: can be removed
+RUN conda list
+
+# Update the environment with the remaining dependencies
+RUN conda env update --name JSatOrbEnv --file /tmp/jsatorbenv.yml
+
+#RUN conda env create -f /tmp/jsatorbenv.yml
+#RUN conda create -n JSatOrbEnv python=3.7 jinja2=2.11.1
+#RUN conda config --add channels conda-forge
+#RUN conda install -n JSatOrbEnv numpy=1.18.1
+#RUN conda install -n JSatOrbEnv matplotlib=3.2.1
+#RUN conda install -n JSatOrbEnv pyparsing=2.4.7
+#RUN conda install -n JSatOrbEnv bottle=0.12.17
+
+# -----------------------------------------------------------------------------
+# Launch the application
+# -----------------------------------------------------------------------------
+
 # Set the working dir to the REST API root folder
 WORKDIR /app/jsatorb-rest-api
+
+# Expose the server project
+EXPOSE 8000
 
 # Start the JSatOrb REST API
 CMD [ "python", "src/JSatOrbREST.py" ]
