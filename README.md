@@ -1,11 +1,18 @@
 # JSatOrb project: Dockerisation module
 
 This JSatOrb module is dedicated to the JSatOrb servers dockerisation.
-It contains all thge information needed to produce the various Docker images and the Docker compose which runs them all.
+It contains all the information needed to produce the various Docker images and the Docker compose which runs them all.
 
 All Docker images run into a Linux Ubuntu 18.04 LTS 64 bit environment, which is the JSatOrb target platform.
 
 The Linux free edition of Docker is the Community Edition (CE).
+
+
+## Prerequisites
+
+- Ubuntu 18.04 LTS,
+- Internet connection,
+- Admin rights (jsatorb user account).
 
 
 ## Uninstalling old Docker versions
@@ -23,6 +30,8 @@ To uninstall a possible previous Docker installation, run the command:
 **NOTE**
 
 ___This whole paragraph ("Installing Docker"), except the last part ("Post-installation steps")  is an extract of the repository setup section from [this Docker documentation webpage.](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository#install-using-the-repository)___
+
+___Remark: The test image run (hello-world) may not download and run successfully until you follow the Docker post-installation paragraph instructions.___
 
 ---
 
@@ -129,7 +138,7 @@ To upgrade Docker Engine, first run `sudo apt-get update`, then follow the insta
 
 #### Post-installation steps
 
-If the previous Docker successfull installation step above failed (with the running of the Hello-world image), you may configure your proxy.  
+If the previous Docker successfull installation step above failed (with the running of the Hello-world image), you may configure your user permissions and your proxy access.
 To do so, follow the steps below.
 
 ##### Add user to docker group
@@ -171,7 +180,7 @@ Verify that you can run docker commands without sudo.
 
 **NOTE**
 
-The information given in this paragraph is an adaptation fom [this Docker documentation webpage](https://docs.docker.com/config/daemon/systemd/#httphttps-proxy).
+The information given in this paragraph is an adaptation from [this Docker documentation webpage](https://docs.docker.com/config/daemon/systemd/#httphttps-proxy).
 
 ---
 
@@ -221,6 +230,34 @@ Or, if you are behind an HTTPS proxy server:
 Environment=HTTPS_PROXY=https://proxy.example.com:443/
 ```
 
+You can now test aganin if your Docker installation is able to run the test image:
+```
+>docker run hello-world
+```
+
+## Configure proxy for the Docker client
+
+Proxy configuration has also to be set for the Docker client by creating or editing an existing ~/.docker/config.json file.
+
+Its content is given in the template below:
+
+```
+{
+   "proxies": {
+     "default": {
+       "httpProxy": "http://proxy.url:port",
+       "httpsProxy": "http://proxy.url:port",
+       "noProxy": "localhost,127.0.0.1,[Complete_with_your_own_proxy_configuration]"
+     }
+   }
+}
+```
+
+It avoids giving those parameters through the command line to the Docker client like in the example below:
+```
+docker build --build-arg http_proxy="http://proxy.url:port" --build-arg https_proxy="http://proxy.url:port" -build-arg no_proxy="localhost,127.0.0.1" -t [IMAGE_NAME] .
+```
+
 
 ## Installing docker compose
 
@@ -228,6 +265,11 @@ To get the latest Docker compose version, get the command from [this page](https
 
 ```
 >sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
+
+If your proxy is not configured in `curl`, you can (temporary solution) give its parameters to curl use the following command (_added curl parameter: -x proxy.url:port_):
+```
+>sudo curl -x proxy.url:port -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 ```
 
 Add execution permission:
@@ -243,14 +285,99 @@ docker-compose version 1.26.0, build d4451659
 
 ## Building JSatOrb Docker images
 
+Check that the docker daemon is started:
+```
+>sudo systemctl status docker
+```
+
+If needed, start the docker daemon with systemctl:
+```
+>sudo systemctl start docker
+```
+
+
+## Generic commands
+
 Build an image and give it a name
 ```
-docker build -t [IMAGE_NAME] .
+>docker build -t [IMAGE_NAME] .
 ```
 
 Run a Docker image (in detached mode)
 ```
-docker run -d [-p HOST_PORT:CONTAINER_PORT] [IMAGE_NAME]
+>docker run -d [-p HOST_PORT:CONTAINER_PORT] [IMAGE_NAME]
+```
+
+
+## Actual commands
+
+### JSatOrb front-end
+
+Go into the JSatOrb frontend project folder:
+```
+>cd jsatorb-frontend
+```
+
+Build the JSatOrb image:
+```
+docker build -t jsatorb-frontend:dev .
+```
+
+Test it into a volatile container:
+```
+docker run -p 80:80 --rm jsatorb-frontend:dev
+```
+
+Connect to the JSatOrb GUI in a Web Browser (no connection port needed):
+```
+http://localhost
+```
+
+Stop the container by hitting Ctrl-C in the terminal you ran it from.
+
+
+### JSatOrb backend/REST API
+
+Go into the JSatOrb root folder:
+```
+>cd repos/git
+```
+
+---
+**NOTE**
+
+__With the modified Orekit 10.2 version only (when Orekit 10.2 is released, this specific step no longer has to be done):__
+
+- In the jsatorb-docker/Dockerfile-backend, activate the 2 lines below the comment heading with "OREKIT_10.2_SNAPSHOT_ONLY".
+---
+
+Build the JSatOrb's backend Docker image
+```
+>docker build -f jsatorb-docker/Dockerfile-backend -t jsatorb-backend:dev .
+```
+
+Test it in a volatile container:
+```
+docker run -p 8000:8000 --rm jsatorb-backend:dev
+```
+
+## Docker versions used to produce delivered JSatOrb server images
+
+The following versions of docker modules have been installed and used in the development environment in order to produce the deliverables (extract from the installation logs):
+
+Docker engine
+```
+Get:1 http://archive.ubuntu.com/ubuntu bionic/universe amd64 pigz amd64 2.4-1 [57.4 kB]
+Get:2 https://download.docker.com/linux/ubuntu bionic/stable amd64 containerd.io amd64 1.2.13-2 [21.4 MB]
+Get:3 http://archive.ubuntu.com/ubuntu bionic/universe amd64 aufs-tools amd64 1:4.9+20170918-1ubuntu1 [104 kB]
+Get:4 http://archive.ubuntu.com/ubuntu bionic/universe amd64 cgroupfs-mount all 1.4 [6,320 B]
+Get:5 https://download.docker.com/linux/ubuntu bionic/stable amd64 docker-ce-cli amd64 5:19.03.11~3-0~ubuntu-bionic [41.2 MB]
+Get:6 https://download.docker.com/linux/ubuntu bionic/stable amd64 docker-ce amd64 5:19.03.11~3-0~ubuntu-bionic [22.5 MB]  
+```
+
+Docker compose:
+```
+docker-compose version 1.26.0, build d4451659
 ```
 
 
