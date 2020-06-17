@@ -111,6 +111,13 @@ docker run -d -p 8000:8000 -v "/home/$USER/JSatOrb/mission-data:/root/JSatOrb/mi
 ___Note: The bind-mount parameters above are used to bind the current user's JSatOrb mission data set from the Docker host to the Docker backend container___
 
 
+#### Testing the image
+
+The __backend__ folder of the current project contains a __backend-test.bash__ script.
+It can be used to test that the backend server is up and working.
+See comments in the script for details.
+
+
 #### Docker compose
 
 Once the two images are built, you can stop all the containers used to test individual JSatOrb images and run the JSatOrb Docker compose as follow:

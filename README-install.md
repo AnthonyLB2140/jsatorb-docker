@@ -332,6 +332,17 @@ Run a Docker image (in detached mode), with optional port mapping
 ```
 
 
+## Installation logs
+
+The __logs__ folder of the current project contains logs of a successfull Docker installation.
+It can be used as a reference in case a problem appears during your installation process.
+
+
+## Scripts
+
+The __scripts__ folder of the current project contains a utility script which shows Docker image dependencies (see comments in script for details).
+
+
 ## Usefull links
 
 [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
