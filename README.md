@@ -1,317 +1,27 @@
 # JSatOrb project: Dockerisation module
 
 This JSatOrb module is dedicated to the JSatOrb servers dockerisation.
-It contains all the information needed to produce the various Docker images and the Docker compose which runs them all.
+It contains all the information needed to:
+- install Docker and Docker compose, 
+- produce the various Docker images and the Docker compose which runs them all.
 
-All Docker images run into a Linux Ubuntu 18.04 LTS 64 bit environment, which is the JSatOrb target platform.
+All JSatOrb Docker images run in a Linux Ubuntu 18.04 LTS 64 bit environment, which is the JSatOrb target platform.
 
 The Linux free edition of Docker is the Community Edition (CE).
 
 
-## Prerequisites
+## Docker Installation
 
-- Ubuntu 18.04 LTS,
-- Internet connection,
-- Admin rights (jsatorb user account).
+All the information relative to the Docker engine and Docker compose installation in an Ubuntu 18.04 LTS 64 bit Linux version are gathered [in this file](./README-install.md).
 
 
-## Uninstalling old Docker versions
+## Preparing the JSatOrb Docker images
 
-To uninstall a possible previous Docker installation, run the command:
-```
->sudo apt-get remove docker docker-engine docker.io containerd runc
-```
+The JSatOrb Docker images preparation process presented below is assumed to be done in a JSatOrb development environment.
+Therefore, it assumes that all the JSatOrb git repositories are available in the `~/JSatOrb/repos/git` folder.
 
 
-## Installing Docker
-
----
-
-**NOTE**
-
-___This whole paragraph ("Installing Docker"), except the last part ("Post-installation steps")  is an extract of the repository setup section from [this Docker documentation webpage.](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository#install-using-the-repository)___
-
-___Remark: The test image run (hello-world) may not download and run successfully until you follow the Docker post-installation paragraph instructions.___
-
----
-
-### Set up the repository
-
-1. Update the `apt` package index and install packages to allow apt to use a repository over HTTPS:
-
-```
->sudo apt-get update
-
->sudo apt-get install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg-agent \
-    software-properties-common
-```
-
-2. Add Docker’s official GPG key:
-
-```
->curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-```
-
-Verify that you now have the key with the fingerprint `9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88`, by searching for the last 8 characters of the fingerprint.
-
-```
->sudo apt-key fingerprint 0EBFCD88
-
-pub   rsa4096 2017-02-22 [SCEA]
-        9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
-uid           [ unknown] Docker Release (CE deb) <docker@docker.com>
-sub   rsa4096 2017-02-22 [S]
-```
-
-3. Use the following command to set up the stable repository. To add the nightly or test repository, add the word nightly or test (or both) after the word stable in the commands below. Learn about nightly and test channels.
-
----
-
-**NOTE**
-
-The lsb_release -cs sub-command below returns the name of your Ubuntu distribution, such as xenial. Sometimes, in a distribution like Linux Mint, you might need to change $(lsb_release -cs) to your parent Ubuntu distribution. For example, if you are using Linux Mint Tessa, you could use bionic. Docker does not offer any guarantees on untested and unsupported Ubuntu distributions.
-
----
-
-```
->sudo add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-    $(lsb_release -cs) \
-    stable"
-```    
-
-#### Install Docker Engine
-
-1. Update the `apt` package index, and install the _latest version_ of Docker Engine and containerd, or go to the next step to install a specific version:
-
-```
->sudo apt-get update
->sudo apt-get install docker-ce docker-ce-cli containerd.io
-```
-
----
-
-**Got multiple Docker repositories ?**
-
-If you have multiple Docker repositories enabled, installing or updating without specifying a version in the apt-get install or apt-get update command always installs the highest possible version, which may not be appropriate for your stability needs.
-
----
-
-2. To install a specific version of Docker Engine, list the available versions in the repo, then select and install:
-
-    a. List the versions available in your repo:
-
-```
->apt-cache madison docker-ce
-
-    docker-ce | 5:18.09.1~3-0~ubuntu-xenial | https://download.docker.com/linux/ubuntu  xenial/stable amd64 Packages
-    docker-ce | 5:18.09.0~3-0~ubuntu-xenial | https://download.docker.com/linux/ubuntu  xenial/stable amd64 Packages
-    docker-ce | 18.06.1~ce~3-0~ubuntu       | https://download.docker.com/linux/ubuntu  xenial/stable amd64 Packages
-    docker-ce | 18.06.0~ce~3-0~ubuntu       | https://download.docker.com/linux/ubuntu  xenial/stable amd64 Packages
-
-```
-
-   b. Install a specific version using the version string from the second column, for example, `5:18.09.1~3-0~ubuntu-xenial`.
-
-```
->sudo apt-get install docker-ce=<VERSION_STRING> docker-ce-cli=<VERSION_STRING> containerd.io
-```
-
-3. Verify that Docker Engine is installed correctly by running the hello-world image.
-
-```
->sudo docker run hello-world
-```
-
-This command downloads a test image and runs it in a container. When the container runs, it prints an informational message and exits.
-
-Docker Engine is installed and running. The `docker` group is created but no users are added to it. You need to use `sudo` to run Docker commands. Continue to `Linux postinstall` to allow non-privileged users to run Docker commands and for other optional configuration steps.
-
-#### Upgrade Docker Engine
-
-To upgrade Docker Engine, first run `sudo apt-get update`, then follow the installation instructions, choosing the new version you want to install.
-
-
-#### Post-installation steps
-
-If the previous Docker successfull installation step above failed (with the running of the Hello-world image), you may configure your user permissions and your proxy access.
-To do so, follow the steps below.
-
-##### Add user to docker group
-
----
-
-**NOTE**
-
-The information given in this paragraph is an adaptation fom [this Docker documentation webpage](https://docs.docker.com/engine/install/linux-postinstall/).
-
----
-
-Create the docker group if it's not already existing:
-```
->sudo groupadd docker
-```
-
-Add your user to the docker group:
-```
->sudo usermod -aG docker $USER
-```
-
-Log out and log back in so that your group membership is re-evaluated.
-
-On Linux, you can also run the following command to activate the changes to groups:
-```
->newgrp docker
-```
-
-Verify that you can run docker commands without sudo.
-```
->docker info
-```
-
-
-##### Proxy setup
-
----
-
-**NOTE**
-
-The information given in this paragraph is an adaptation from [this Docker documentation webpage](https://docs.docker.com/config/daemon/systemd/#httphttps-proxy).
-
----
-
-This example overrides the default docker.service file.
-
-If you are behind an HTTP or HTTPS proxy server, for example in corporate settings, you need to add this configuration in the Docker systemd service file.
-
-Create a systemd drop-in directory for the docker service:
-```
->sudo mkdir -p /etc/systemd/system/docker.service.d
-```
-
-Create a file called /etc/systemd/system/docker.service.d/http-proxy.conf that adds the HTTP_PROXY environment variable:
-
-```
-[Service]    
-Environment="HTTP_PROXY=http://proxy.example.com:80/" "NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp"
-```
-
-Or, if you are behind an HTTPS proxy server, create a file called /etc/systemd/system/docker.service.d/https-proxy.conf that adds the HTTPS_PROXY environment variable:
-
-```
-[Service]    
-Environment="HTTPS_PROXY=https://proxy.example.com:443/" "NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp"
-```
-
-Flush changes: 
-```
->sudo systemctl daemon-reload
-```
-
-Restart Docker: 
-```
->sudo systemctl restart docker
-```
-
-Verify that the configuration has been loaded:
-```
->systemctl show --property=Environment docker
-Environment=HTTP_PROXY=http://proxy.example.com:80/
-```
-
-Or, if you are behind an HTTPS proxy server:
-
-```
->systemctl show --property=Environment docker
-Environment=HTTPS_PROXY=https://proxy.example.com:443/
-```
-
-You can now test aganin if your Docker installation is able to run the test image:
-```
->docker run hello-world
-```
-
-## Configure proxy for the Docker client
-
-Proxy configuration has also to be set for the Docker client by creating or editing an existing ~/.docker/config.json file.
-
-Its content is given in the template below:
-
-```
-{
-   "proxies": {
-     "default": {
-       "httpProxy": "http://proxy.url:port",
-       "httpsProxy": "http://proxy.url:port",
-       "noProxy": "localhost,127.0.0.1,[Complete_with_your_own_proxy_configuration]"
-     }
-   }
-}
-```
-
-It avoids giving those parameters through the command line to the Docker client like in the example below:
-```
-docker build --build-arg http_proxy="http://proxy.url:port" --build-arg https_proxy="http://proxy.url:port" -build-arg no_proxy="localhost,127.0.0.1" -t [IMAGE_NAME] .
-```
-
-
-## Installing docker compose
-
-To get the latest Docker compose version, get the command from [this page](https://docs.docker.com/compose/install/) or use the one below for the 1.26.0 version:
-
-```
->sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-```
-
-If your proxy is not configured in `curl`, you can (temporary solution) give its parameters to curl use the following command (_added curl parameter: -x proxy.url:port_):
-```
->sudo curl -x proxy.url:port -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-```
-
-Add execution permission:
-```
->sudo chmod +x /usr/local/bin/docker-compose
-```
-
-Check installation works:
-```
->docker-compose --version
-docker-compose version 1.26.0, build d4451659
-```
-
-## Building JSatOrb Docker images
-
-Check that the docker daemon is started:
-```
->sudo systemctl status docker
-```
-
-If needed, start the docker daemon with systemctl:
-```
->sudo systemctl start docker
-```
-
-
-## Generic commands
-
-Build an image and give it a name
-```
->docker build -t [IMAGE_NAME] .
-```
-
-Run a Docker image (in detached mode)
-```
->docker run -d [-p HOST_PORT:CONTAINER_PORT] [IMAGE_NAME]
-```
-
-
-## Actual commands
-
-### JSatOrb front-end
+### JSatOrb frontend image
 
 Go into the JSatOrb frontend project folder:
 ```
@@ -320,12 +30,12 @@ Go into the JSatOrb frontend project folder:
 
 Build the JSatOrb image:
 ```
-docker build -t jsatorb-frontend:dev .
+docker build -t jsatorb-frontend:prod .
 ```
 
 Test it into a volatile container:
 ```
-docker run -p 80:80 --rm jsatorb-frontend:dev
+docker run -p 80:80 --rm jsatorb-frontend:prod
 ```
 
 Connect to the JSatOrb GUI in a Web Browser (no connection port needed):
@@ -333,59 +43,76 @@ Connect to the JSatOrb GUI in a Web Browser (no connection port needed):
 http://localhost
 ```
 
-Stop the container by hitting Ctrl-C in the terminal you ran it from.
+Stop the container by hitting Ctrl-C in the terminal you ran it from, or stop it smoothly in another terminal with:
+```
+docker stop <CONTAINER_ID>
+```
 
 
 ### JSatOrb backend/REST API
 
-Go into the JSatOrb root folder:
+The JSatOrb backend Docker image generation process needs two files external to the JSatOrb source code:
+- __jsatorbenv.yml:__ contains a list of (almost) all the backend python dependencies. It is a file generated thanks to conda, but customized in purpose for reasons given in details below.
+- __orekit-10.2-py37he1b5a44_0.tar.bz2:__ conda package containing the Orekit Python wrapper modified by by CS Group to add JSatOrb specific features and tagged v10.2 (snapshot).
+
+___Remark:___ These two files are available in the __jsatorb-docker/backend__ folder.
+
+
+#### Generating the conda environment file
+
+The jsatorb-docker/backend folder already contains the final __jsatorbenv.yml__ file.
+We still describe here how to re-generate it in the case this has to be done slightly differently in potential future JSatOrb releases.
+
+1. Go into the JSatOrb root folder:
 ```
 >cd repos/git
 ```
 
-TODO: GENERATE ENV and REMOVE manually Orekit and pyparsing
-
----
-**NOTE**
-
-__With the modified Orekit 10.2 version only (when Orekit 10.2 is released, this specific step no longer has to be done):__
-
-- In the jsatorb-docker/Dockerfile-backend, activate the 2 lines below the comment heading with "OREKIT_10.2_SNAPSHOT_ONLY".
----
-
-Build the JSatOrb's backend Docker image
+2. Activate the JSatOrb Python virtual environment
 ```
->docker build -f jsatorb-docker/Dockerfile-backend -t jsatorb-backend:dev .
+>conda activate JSatOrbEnv
 ```
 
-Test it in a volatile container:
+3. Export the JSatOrb conda environment
 ```
-docker run -p 8000:8000 --rm jsatorb-backend:dev
-```
-
-## Docker versions used to produce delivered JSatOrb server images
-
-The following versions of docker modules have been installed and used in the development environment in order to produce the deliverables (extract from the installation logs):
-
-Docker engine
-```
-Get:1 http://archive.ubuntu.com/ubuntu bionic/universe amd64 pigz amd64 2.4-1 [57.4 kB]
-Get:2 https://download.docker.com/linux/ubuntu bionic/stable amd64 containerd.io amd64 1.2.13-2 [21.4 MB]
-Get:3 http://archive.ubuntu.com/ubuntu bionic/universe amd64 aufs-tools amd64 1:4.9+20170918-1ubuntu1 [104 kB]
-Get:4 http://archive.ubuntu.com/ubuntu bionic/universe amd64 cgroupfs-mount all 1.4 [6,320 B]
-Get:5 https://download.docker.com/linux/ubuntu bionic/stable amd64 docker-ce-cli amd64 5:19.03.11~3-0~ubuntu-bionic [41.2 MB]
-Get:6 https://download.docker.com/linux/ubuntu bionic/stable amd64 docker-ce amd64 5:19.03.11~3-0~ubuntu-bionic [22.5 MB]  
+>conda env export > jsatorbenv.yml
 ```
 
-Docker compose:
+4. Edit the environment file
+
+The following dependencies (the whole line of each) has to be removed from the environment file (explanations on why are below):
+
+- __orekit=10.2=py37he1b5a44_0:__ because we have to install the modified Orekit python wrapper dependency locally instead of getting it from the Anaconda Web repository (channel conda-forge),
+- __pyparsing=2.4.7=pyh9f0ad1d_0:__ because an issue appeared in March 2020 about the conda repository package storage format, we have to download and install manually some dependencies (see https://github.com/conda/conda/issues/9761).
+- __bottle=0.12.17=py_0:__ For the same reason as the __pyparsing__ dependency, we also have to download and install manually this dependency and therefore have to remove it from the conda automatic download and installation process based on the environment file.
+
+___Remark: Once the JSatOrb Orekit dependency has moved back to official releases, removing the Orekit dependency from the environment file is no more required. Beware that if doing so, the Dockerfile has to be updated accordingly to not install manually the Orekit dependency anymore.___
+
+
+5. Update the reference file
+
+If the environment file obtained is different from the reference one, don't forget to update and commit the new version.
+
+
+#### Building the image
+
+Copy the __Dockerfile__ and __.dockerignore__ files from __jsatorb-docker/backend__ folder into the JSatOrb git root folder.
+
+From this git root folder, run the Docker build as follow:
 ```
-docker-compose version 1.26.0, build d4451659
+>docker build -t jsatorb-backend:prod .
 ```
 
+Test it in a detached (-d) volatile (--rm) container:
+```
+docker run -d -p 8000:8000 -v "/home/$USER/JSatOrb/mission-data:/root/JSatOrb/mission-data"  --rm jsatorb-backend:prod
+```
 
-## Usefull links
+___Note: The bind-mount parameters above are used to bind the current user's JSatOrb mission data set from the Docker host to the Docker backend container___
 
-[Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
-[Configure proxy for the Docker Daemon](https://docs.docker.com/config/daemon/systemd/#httphttps-proxy)
-[Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/)
-[Install Docker compose](https://docs.docker.com/compose/install/)
+
+#### Docker compose
+
+Once the two images are built, you can stop all the containers used to test individual JSatOrb images and run the JSatOrb Docker compose as follow:
+```
+```
