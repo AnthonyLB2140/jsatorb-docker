@@ -123,3 +123,36 @@ See comments in the script for details.
 Once the two images are built, you can stop all the containers used to test individual JSatOrb images and run the JSatOrb Docker compose as follow:
 ```
 ```
+
+
+### JSatOrb Celestrak server image
+
+#### Getting the image
+
+The Celestrak server image is available on DockerHub.
+This image can be downloaded with the following command:
+```
+>docker pull thib21/celestrak-json-proxy:dev
+```
+
+#### Running the image
+
+This image can be run with the following command:
+```
+>docker run -d -p 7777:7777 --name celestrak-json-proxy-container thib21/celestrak-json-proxy
+```
+
+
+### Exporting the JSatOrb Docker images
+
+In order to export JSatOrb Docker images, use the following command on each JSatOrb image:
+```
+>docker export --output="[jsatorb-image-exported-file.tar]" [JSatOrb image name/ID]
+```
+
+Example:
+```
+>docker export --output="jsatorb-frontend.tar" jsatorb-frontend:prod
+```
+
+___Note: Exporting the JSatOrb Docker images is needed when building the JSatOrb user installation archive.___
