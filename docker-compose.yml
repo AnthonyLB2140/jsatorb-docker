@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  backend:
+    image: jsatorb-backend:prod
+    ports:
+      - "8000:8000"
+    volumes:
+      - type: bind
+        source: "/home/${USER}/JSatOrb/mission-data"
+        target: "/root/JSatOrb/mission-data"
+      - type: volume
+        source: "backend_files"
+        target: "/app/jsatorb-rest-api/files"
+    restart: always
+
+  frontend:
+    depends_on:
+      - backend
+    image: jsatorb-frontend:prod
+    ports:
+      - "80:80"
+    restart: always
+
+  celestrak:
+    image: thib21/celestrak-json-proxy:dev
+    ports:
+      - "7777:7777"
+    restart: always
+
+volumes:
+  backend_files:
