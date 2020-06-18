@@ -56,34 +56,6 @@ RUN mkdir -p /app/jsatorb-visibility-service/src \
 WORKDIR /app
 
 # -----------------------------------------------------------------------------
-# Copy the different backend parts contents into the container.
-# -----------------------------------------------------------------------------
-
-# jsatorb-visibility-service
-COPY jsatorb-visibility-service/src jsatorb-visibility-service/src
-COPY jsatorb-rest-api/orekit-data.zip jsatorb-visibility-service
-
-# jsatorb-eclipse-service
-COPY jsatorb-eclipse-service/src jsatorb-eclipse-service/src
-COPY jsatorb-rest-api/orekit-data.zip jsatorb-eclipse-service
-
-# jsatorb-date-conversion
-COPY jsatorb-date-conversion/src jsatorb-date-conversion/src
-COPY jsatorb-rest-api/orekit-data.zip jsatorb-date-conversion
-
-# jsatorb-common
-COPY jsatorb-common/src jsatorb-common/src
-COPY jsatorb-rest-api/orekit-data.zip jsatorb-common
-
-# jsatorb-coverage-service
-COPY jsatorb-coverage-service/src jsatorb-coverage-service/src
-COPY jsatorb-rest-api/orekit-data.zip jsatorb-coverage-service
-
-# JSatOrb's REST API
-COPY jsatorb-rest-api/src jsatorb-rest-api/src
-COPY jsatorb-rest-api/orekit-data.zip jsatorb-rest-api
-
-# -----------------------------------------------------------------------------
 # Install the Python environment
 # -----------------------------------------------------------------------------
 
@@ -125,6 +97,41 @@ RUN conda list
 
 # Update the environment with the remaining dependencies
 RUN conda env update --name JSatOrbEnv --file /tmp/jsatorbenv.yml
+
+# -----------------------------------------------------------------------------
+# Copy the different backend parts contents into the container.
+# -----------------------------------------------------------------------------
+
+# jsatorb-visibility-service
+COPY jsatorb-visibility-service/src jsatorb-visibility-service/src
+COPY jsatorb-rest-api/orekit-data.zip jsatorb-visibility-service
+COPY jsatorb-visibility-service/templates jsatorb-visibility-service/templates
+
+# jsatorb-eclipse-service
+COPY jsatorb-eclipse-service/src jsatorb-eclipse-service/src
+COPY jsatorb-rest-api/orekit-data.zip jsatorb-eclipse-service
+
+# jsatorb-date-conversion
+COPY jsatorb-date-conversion/src jsatorb-date-conversion/src
+COPY jsatorb-rest-api/orekit-data.zip jsatorb-date-conversion
+
+# jsatorb-common
+COPY jsatorb-common/src jsatorb-common/src
+COPY jsatorb-rest-api/orekit-data.zip jsatorb-common
+COPY jsatorb-common/templates jsatorb-common/templates
+
+# jsatorb-coverage-service
+COPY jsatorb-coverage-service/src jsatorb-coverage-service/src
+COPY jsatorb-rest-api/orekit-data.zip jsatorb-coverage-service
+
+# JSatOrb's REST API
+COPY jsatorb-rest-api/src jsatorb-rest-api/src
+COPY jsatorb-rest-api/orekit-data.zip jsatorb-rest-api
+COPY jsatorb-rest-api/files/Models jsatorb-rest-api/files/Models
+COPY jsatorb-rest-api/templates jsatorb-rest-api/templates
+
+# Update the files subfolders write permissions
+RUN find /app -mindepth 1 -maxdepth 3 -name "files" -type d -exec chmod -R o+w {} \;
 
 # -----------------------------------------------------------------------------
 # Launch the application
