@@ -152,7 +152,19 @@ In order to export JSatOrb Docker images, use the following command on each JSat
 
 Example:
 ```
->docker export --output="jsatorb-frontend.tar" jsatorb-frontend:prod
+>docker export --output="jsatorb-frontend-docker-image.tar" jsatorb-frontend:prod
 ```
 
-___Note: Exporting the JSatOrb Docker images is needed when building the JSatOrb user installation archive.___
+---
+
+**NOTE:**  
+
+Exporting the JSatOrb Docker images is needed when building the JSatOrb user installation archive.  
+___In this case, they have to be exported in the **jsatord-docker/docker_images** folder.___
+
+The image names expected by the delivery preparation script are as follow:
+- **backend:   jsatorb-backend-docker-image.tar**
+- **frontend:  jsatorb-frontend-docker-image.tar**
+- **celestrak: celestrak-json-proxy-docker-image.tar**
+
+---

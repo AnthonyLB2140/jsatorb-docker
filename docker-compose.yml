@@ -27,6 +27,7 @@ version: "3.8"
 services:
   # JSatOrb's backend container
   backend:
+    container_name: jsatorb-backend-container
     image: jsatorb-backend:prod
     ports:
       - "8000:8000"
@@ -39,6 +40,7 @@ services:
 
   # JSatOrb's frontend container
   frontend:
+    container_name: jsatorb-frontend-container
     depends_on:
       - backend
     image: jsatorb-frontend:prod
@@ -48,6 +50,7 @@ services:
 
   # JSatOrb's Celestrak container
   celestrak:
+    container_name: celestrak-json-proxy-container
     image: thib21/celestrak-json-proxy:dev
     ports:
       - "7777:7777"
