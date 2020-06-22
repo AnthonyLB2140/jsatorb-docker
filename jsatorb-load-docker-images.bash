@@ -12,7 +12,7 @@ echo "Installing JSatOrb Docker images"
 
 echo "-- JSatOrb frontend Docker image"
 # Load the JSatOrb frontend Docker image.
-gunzip -c ./exported_images/jsatorb-frontend-docker-image.tgz | docker load
+gunzip -c ./docker_images/jsatorb-frontend-docker-image.tgz | docker load
 
 # Check if the command succeeded
 if [ $? -ne 0 ]; then
@@ -22,7 +22,7 @@ fi
 
 echo "-- JSatOrb backend Docker image"
 # Load the JSatOrb backend Docker image.
-gunzip -c ./exported_images/jsatorb-backend-docker-image.tgz | docker load
+gunzip -c ./docker_images/jsatorb-backend-docker-image.tgz | docker load
 
 # Check if the command succeeded
 if [ $? -ne 0 ]; then
@@ -32,7 +32,7 @@ fi
 
 echo "-- JSatOrb Celestrak server Docker image"
 # Load the JSatOrb Celestrak Docker image.
-gunzip -c ./exported_images/celestrak-json-proxy-docker-image.tgz | docker load
+gunzip -c ./docker_images/celestrak-json-proxy-docker-image.tgz | docker load
 
 # Check if the command succeeded
 if [ $? -ne 0 ]; then
