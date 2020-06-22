@@ -143,28 +143,33 @@ This image can be run with the following command:
 ```
 
 
-### Exporting the JSatOrb Docker images
+### Extracting the JSatOrb Docker images
 
-In order to export JSatOrb Docker images, use the following command on each JSatOrb image:
+In order to extract/save the JSatOrb Docker images, use the following command on each JSatOrb image:
 ```
 >docker export --output="[jsatorb-image-exported-file.tar]" [JSatOrb image name/ID]
+>docker save [JSatOrb image name/ID:TAG] | gzip > ./docker_images/[jsatorb-image-exported-file.tgz]
 ```
 
 Example:
 ```
->docker export --output="jsatorb-frontend-docker-image.tar" jsatorb-frontend:prod
+>docker save jsatorb-frontend:prod | gzip > ./docker_images/jsatorb-frontend-docker-image.tgz
 ```
 
 ---
 
+A script exists that does exactly this job for all the JSatOrb Docker images.
+It can be found in the jsatorb-docker project. Its name is __jsatorb-save-docker-images.bash__.
+
+
 **NOTE:**  
 
-Exporting the JSatOrb Docker images is needed when building the JSatOrb user installation archive.  
-___In this case, they have to be exported in the **jsatord-docker/docker_images** folder.___
+Extracting the JSatOrb Docker images is needed when building the JSatOrb user installation archive.  
+___In this case, they have to be saved in the **jsatord-docker/docker_images** folder.___
 
 The image names expected by the delivery preparation script are as follow:
-- **backend:   jsatorb-backend-docker-image.tar**
-- **frontend:  jsatorb-frontend-docker-image.tar**
-- **celestrak: celestrak-json-proxy-docker-image.tar**
+- **backend:   jsatorb-backend-docker-image.tgz**
+- **frontend:  jsatorb-frontend-docker-image.tgz**
+- **celestrak: celestrak-json-proxy-docker-image.tgz**
 
 ---
