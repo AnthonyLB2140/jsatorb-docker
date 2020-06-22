@@ -250,7 +250,7 @@ Or, if you are behind an HTTPS proxy server:
 Environment=HTTPS_PROXY=https://proxy.example.com:443/
 ```
 
-You can now test aganin if your Docker installation is able to run the test image:
+You can now test again if your Docker installation is able to run the test image:
 ```
 >docker run hello-world
 ```
