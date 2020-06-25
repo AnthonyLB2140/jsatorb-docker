@@ -147,7 +147,6 @@ This image can be run with the following command:
 
 In order to extract/save the JSatOrb Docker images, use the following command on each JSatOrb image:
 ```
->docker export --output="[jsatorb-image-exported-file.tar]" [JSatOrb image name/ID]
 >docker save [JSatOrb image name/ID:TAG] | gzip > ./docker_images/[jsatorb-image-exported-file.tgz]
 ```
 
