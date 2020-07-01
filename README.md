@@ -17,8 +17,11 @@ All the information relative to the Docker engine and Docker compose installatio
 
 ## Preparing the JSatOrb Docker images
 
-The JSatOrb Docker images preparation process presented below is assumed to be done in a JSatOrb development environment.
-Therefore, it assumes that all the JSatOrb git repositories are available in the `~/JSatOrb/repos/git` folder.
+The JSatOrb Docker images preparation process presented below is assumed to be done in a JSatOrb development environment.  
+Therefore, it assumes that all the JSatOrb git repositories are available in the `~/JSatOrb/repos/git` folder.  
+It also assumes that the JSatOrb frontend and backend has been built at least once and successfully:
+- The procedure to build the JSatOrb frontend can be found [in this documentation](../jsatorb-frontend/README.md).
+The procedure to build the JSatOrb backend can be found [in this documentation](../jsatorb-rest-api/README.md).
 
 
 ### JSatOrb frontend image
